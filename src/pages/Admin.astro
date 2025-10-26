@@ -1,0 +1,45 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login Admin</title>
+    <style>
+      body { font-family: Arial; text-align: center; padding: 2rem; }
+      input { margin: 0.5rem; padding: 0.3rem; }
+      button { padding: 0.3rem 0.5rem; }
+      #error { color: red; font-weight: bold; }
+    </style>
+  </head>
+  <body>
+    <h1>Login Administrador</h1>
+    <div id="error"></div>
+    <input id="usuario" placeholder="Usuario" />
+    <input id="password" placeholder="Contraseña" type="password" />
+    <button id="btnLogin">Ingresar</button>
+
+    <script type="module">
+      const btnLogin = document.getElementById('btnLogin');
+      const errorDiv = document.getElementById('error');
+
+      btnLogin.addEventListener('click', async () => {
+        const usuario = document.getElementById('usuario').value;
+        const password = document.getElementById('password').value;
+
+        const res = await fetch('http://localhost:3000/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          // Guardamos "token" temporal en sessionStorage
+          sessionStorage.setItem('adminLogged', 'true');
+          // Redirigimos a CRUD
+          window.location.href = '/admin/Crud';
+        } else {
+          errorDiv.textContent = 'Usuario o contraseña incorrectos';
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Menu de Platos</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 2rem; max-width: 800px; margin: auto; }
+      h1 { text-align: center; }
+      .plato { border: 1px solid #ccc; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; }
+      input { margin: 0.2rem; padding: 0.3rem; }
+      button { margin: 0.2rem; padding: 0.3rem 0.5rem; cursor: pointer; }
+      section { margin-bottom: 2rem; }
+      #errores { color: red; font-weight: bold; margin-bottom: 1rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Menu de Platos</h1>
+
+    <div id="errores"></div>
+
+    <section>
+      <h2>Agregar nuevo plato</h2>
+      <input id="nombre" placeholder="Nombre" />
+      <input id="ingredientes" placeholder="Ingredientes" />
+      <input id="precio" placeholder="Precio" type="number" />
+      <input id="categoria" placeholder="Categoría" />
+      <button id="btnAgregar">Agregar</button>
+    </section>
+
+    <section>
+      <h2>Actualizar precio de un plato</h2>
+      <input id="updateId" placeholder="ID del plato" />
+      <input id="updatePrecio" placeholder="Nuevo precio" type="number" />
+      <button id="btnActualizar">Actualizar</button>
+    </section>
+
+    <section>
+      <h2>Platos disponibles</h2>
+      <div id="platos"></div>
+    </section>
+
+    <script type="module" src="/src/scripts/api.js"></script>
+  </body>
+</html>
