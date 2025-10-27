@@ -1,108 +1,138 @@
-// URL del backend
-const apiUrl = 'http://localhost:3000/platos';
+const API_BASE = 'http://localhost:3000';
 
-// Selección de elementos del DOM
-const erroresDiv = document.getElementById('errores');
-const platosContainer = document.getElementById('platos');
-const btnAgregar = document.getElementById('btnAgregar');
-const btnActualizar = document.getElementById('btnActualizar');
-
-// Función para renderizar los platos
-export async function renderPlatos() {
+// --- CARGAR CATEGORÍAS ---
+async function cargarCategorias() {
   try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error('Error al obtener los platos');
+    const res = await fetch(`${API_BASE}/categorias`);
     const data = await res.json();
-    platosContainer.innerHTML = '';
 
-    data.forEach(plato => {
+    const select = document.getElementById('categoria');
+    select.innerHTML = ''; // Limpia el selector
+    data.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.nombre || cat.name || cat.id;
+      option.textContent = cat.nombre || cat.name;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error('Error al cargar categorías:', err);
+    document.getElementById('errores').textContent = 'Error al cargar categorías.';
+  }
+}
+
+// --- AGREGAR PLATO ---
+async function agregarPlato() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const ingredientes = document.getElementById('ingredientes').value.trim();
+  const precio = document.getElementById('precio').value.trim();
+  const categoria = document.getElementById('categoria').value;
+
+  if (!nombre || !precio || !categoria) {
+    alert('Complete todos los campos obligatorios.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/platos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, ingredientes, precio: parseFloat(precio), categoria }),
+    });
+
+    if (res.ok) {
+      alert('Plato agregado con éxito.');
+      cargarPlatos();
+    } else {
+      alert('Error al agregar plato.');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+  }
+}
+
+// --- ACTUALIZAR PRECIO ---
+async function actualizarPrecio() {
+  const id = document.getElementById('updateId').value;
+  const nuevoPrecio = document.getElementById('updatePrecio').value;
+
+  if (!id || !nuevoPrecio) {
+    alert('Ingrese ID y nuevo precio.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/platos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ precio: parseFloat(nuevoPrecio) }),
+    });
+
+    if (res.ok) {
+      alert('Precio actualizado con éxito.');
+      cargarPlatos();
+    } else {
+      alert('Error al actualizar el plato.');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+  }
+}
+
+// --- ELIMINAR PLATO ---
+async function eliminarPlato(id) {
+  if (!confirm('¿Seguro que quiere eliminar este plato?')) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/platos/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      alert('Plato eliminado.');
+      cargarPlatos();
+    } else {
+      alert('Error al eliminar plato.');
+    }
+  } catch (err) {
+    console.error('Error al eliminar plato:', err);
+  }
+}
+
+// --- MOSTRAR PLATOS ---
+async function cargarPlatos() {
+  try {
+    const res = await fetch(`${API_BASE}/platos`);
+    const platos = await res.json();
+
+    const contenedor = document.getElementById('platos');
+    contenedor.innerHTML = '';
+
+    platos.forEach(p => {
       const div = document.createElement('div');
       div.className = 'plato';
       div.innerHTML = `
-        <strong>ID ${plato.id} - ${plato.nombre}</strong> - ${plato.categoria} <br>
-        Ingredientes: ${plato.ingredientes} <br>
-        Precio: $${plato.precio} <br>
-        <button class="eliminar-btn" data-id="${plato.id}">Eliminar</button>
+        <strong>ID:</strong> ${p.id}<br/>
+        <strong>Nombre:</strong> ${p.nombre}<br/>
+        <strong>Ingredientes:</strong> ${p.ingredientes}<br/>
+        <strong>Precio:</strong> $${p.precio}<br/>
+        <strong>Categoría:</strong> ${p.categoria}<br/>
       `;
-      platosContainer.appendChild(div);
-    });
 
-    // Agregar listener a botones eliminar
-    document.querySelectorAll('.eliminar-btn').forEach(btn => {
-      btn.addEventListener('click', () => eliminarPlato(btn.dataset.id));
-    });
+      // Botón Eliminar
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = 'Eliminar';
+      btnEliminar.addEventListener('click', () => eliminarPlato(p.id));
+      div.appendChild(btnEliminar);
 
+      contenedor.appendChild(div);
+    });
   } catch (err) {
-    erroresDiv.textContent = err.message;
+    console.error('Error al cargar platos:', err);
+    document.getElementById('errores').textContent = 'Error al cargar platos.';
   }
 }
 
-// Función para agregar un plato
-export async function agregarPlato() {
-  try {
-    const nombre = document.getElementById('nombre').value;
-    const ingredientes = document.getElementById('ingredientes').value;
-    const precio = parseFloat(document.getElementById('precio').value);
-    const categoria = document.getElementById('categoria').value;
+// --- EVENTOS ---
+document.getElementById('btnAgregar').addEventListener('click', agregarPlato);
+document.getElementById('btnActualizar').addEventListener('click', actualizarPrecio);
 
-    if (!nombre) return alert('Nombre requerido');
-
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, ingredientes, precio, categoria })
-    });
-    if (!res.ok) throw new Error('Error al agregar plato');
-
-    // Limpiar inputs
-    document.getElementById('nombre').value = '';
-    document.getElementById('ingredientes').value = '';
-    document.getElementById('precio').value = '';
-    document.getElementById('categoria').value = '';
-
-    renderPlatos();
-  } catch (err) {
-    erroresDiv.textContent = err.message;
-  }
-}
-
-// Función para actualizar precio de un plato
-export async function actualizarPlato() {
-  try {
-    const id = document.getElementById('updateId').value;
-    const precio = parseFloat(document.getElementById('updatePrecio').value);
-    if (!id || !precio) return alert('ID y precio requeridos');
-
-    const res = await fetch(`${apiUrl}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ precio })
-    });
-    if (!res.ok) throw new Error('Error al actualizar plato');
-
-    document.getElementById('updateId').value = '';
-    document.getElementById('updatePrecio').value = '';
-
-    renderPlatos();
-  } catch (err) {
-    erroresDiv.textContent = err.message;
-  }
-}
-
-// Función para eliminar un plato
-export async function eliminarPlato(id) {
-  try {
-    const res = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Error al eliminar plato');
-    renderPlatos();
-  } catch (err) {
-    erroresDiv.textContent = err.message;
-  }
-}
-
-// Inicialización de eventos
-btnAgregar.addEventListener('click', agregarPlato);
-btnActualizar.addEventListener('click', actualizarPlato);
-
-// Carga inicial de platos
-renderPlatos();
+// --- INICIO ---
+cargarCategorias();
+cargarPlatos();
