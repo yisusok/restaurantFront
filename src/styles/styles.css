@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+/* Encabezado de cada categoría */
+.cate {
+  @apply text-4xl font-serif italic text-amber-500 mt-16 mb-8 border-b-4 border-amber-400 pb-2 text-center tracking-wide;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Contenedor de los platos */
+.containerC {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-12;
+}
+
+/* Tarjeta de cada plato */
+.plato {
+  @apply relative bg-gradient-to-br from-white to-amber-50 rounded-3xl p-6 shadow-2xl transition-transform transform hover:scale-105;
+  border: 1px solid rgba(218, 165, 32, 0.2);
+}
+
+/* Si agregas imagen dinámica */
+.plato img {
+  @apply w-full h-52 object-cover rounded-2xl mb-4 border border-amber-200 shadow-inner;
+}
+
+/* Nombre del plato */
+.plato strong {
+  @apply text-2xl font-serif text-gray-900 block mb-1;
+  letter-spacing: 0.5px;
+}
+
+/* Precio del plato */
+.plato span {
+  @apply text-amber-600 font-bold text-xl float-right;
+  background: rgba(255, 223, 93, 0.15);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+/* Ingredientes */
+.plato p {
+  @apply text-gray-700 text-sm mt-3 leading-relaxed;
+  font-style: italic;
+}
+
+/* Resaltar ingredientes especiales */
+.plato p span {
+  @apply font-semibold text-gray-800;
+}
+
+/* Fondo decorativo dentro de la tarjeta */
+.plato::before {
+  content: '';
+  @apply absolute top-0 left-0 w-16 h-16 rounded-full bg-amber-100 opacity-20;
+}
+
+/* Hover dramático */
+.plato:hover {
+  @apply bg-gradient-to-tr from-amber-50 to-white ;
+  transform: translateY(-5px) scale(1.05);
+}

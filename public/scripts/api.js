@@ -10,8 +10,8 @@ async function cargarCategorias() {
     select.innerHTML = ''; // Limpia el selector
     data.forEach(cat => {
       const option = document.createElement('option');
-      option.value = cat.nombre || cat.name || cat.id;
-      option.textContent = cat.nombre || cat.name;
+      option.value = cat.id;        // ID real de la categoría
+      option.textContent = cat.nombre; // lo que ve el usuario
       select.appendChild(option);
     });
   } catch (err) {
@@ -25,9 +25,9 @@ async function agregarPlato() {
   const nombre = document.getElementById('nombre').value.trim();
   const ingredientes = document.getElementById('ingredientes').value.trim();
   const precio = document.getElementById('precio').value.trim();
-  const categoria = document.getElementById('categoria').value;
+  const categoria_id = parseInt(document.getElementById('categoria').value); // ⚡ ahora sí
 
-  if (!nombre || !precio || !categoria) {
+  if (!nombre || !precio || !categoria_id) {
     alert('Complete todos los campos obligatorios.');
     return;
   }
@@ -36,7 +36,12 @@ async function agregarPlato() {
     const res = await fetch(`${API_BASE}/platos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, ingredientes, precio: parseFloat(precio), categoria }),
+      body: JSON.stringify({
+        nombre,
+        ingredientes,
+        precio: parseFloat(precio),
+        categoria_id, // ⚡ enviar el ID correcto
+      }),
     });
 
     if (res.ok) {
@@ -112,7 +117,7 @@ async function cargarPlatos() {
         <strong>Nombre:</strong> ${p.nombre}<br/>
         <strong>Ingredientes:</strong> ${p.ingredientes}<br/>
         <strong>Precio:</strong> $${p.precio}<br/>
-        <strong>Categoría:</strong> ${p.categoria}<br/>
+        <strong>Categoría:</strong> ${p.categoria ? p.categoria.nombre : p.categoria_id}<br/>
       `;
 
       // Botón Eliminar

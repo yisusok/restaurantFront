@@ -1,37 +1,16 @@
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Restaurante</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background: #f9f9f9;
-      }
-      h1 {
-        margin-bottom: 2rem;
-      }
-      button {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-        cursor: pointer;
-        border: none;
-        border-radius: 5px;
-        background-color: #4CAF50;
-        color: white;
-        transition: background-color 0.3s;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Bienvenido al Restaurante</h1>
-    <button onclick="window.location.href='/Admin'">Ir al Admin</button>
-  </body>
-</html>
+---
+import Layout from './../layouts/Layout.astro'
+import Hero from './../components/hero/Hero.astro'
+import History from './../components/sections/History.astro'
+import Especialidad from './../components/sections/Especialidad.astro'
+import Location from './../components/sections/Location.astro'
+import Footer from './../components/Footer/Footer.astro'
+---
+
+<Layout>
+  <Hero/>
+  <History/>
+  <Especialidad/>
+  <Location/>
+  <Footer/>
+</Layout>
